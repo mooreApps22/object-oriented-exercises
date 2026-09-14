@@ -45,9 +45,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(INCS)
 	@echo "${GREEN}\\t$@ was successfully created.${RESET}"
 
 $(NAME): $(OBJS)
-	@echo "${CYAN}Building $(NAME) and linking .o files...${RESET}"
+	@echo "${WHITE_BG}${BLACK}Building $(NAME) and linking .o files...${RESET}"
 	$(CPP) $(FLAGS) $(OBJS) -o $(NAME)
-	@echo "${GREEN}\\t$(NAME) successfully built and .o files linked!${RESET}"
+	@echo "${GREEN_BG}${WHITE}$(NAME) successfully built and .o files linked!${RESET}"
 
 clean:
 	@echo "${YELLOW}Deleting $(OBJ_DIR) and .o files...${RESET}"
@@ -57,7 +57,7 @@ clean:
 fclean: clean
 	@echo "${RED}Deleting $(NAME)...${RESET}"
 	@rm -f $(NAME)
-	@echo "${GREEN}\\t$(NAME) successfully deleted!${RESET}"
+	@echo "${GREEN}$(NAME) successfully deleted!${RESET}"
 
 re: fclean all
 	@echo "${BLUE}Rebuilding $(NAME)...${RESET}"
