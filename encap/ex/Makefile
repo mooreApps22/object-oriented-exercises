@@ -18,50 +18,86 @@ PURPLE_BG = \033[45m
 CYAN_BG = \033[46m
 WHITE_BG = \033[47m
 
-NAME = encap
+# PROGRAMS #########################
+
+SERVER_NAME = server 
+CLIENT_NAME = client 
 CPP = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98 -Wshadow -D_GLIBCXX_USE_CXX11_ABI=0 -g3
 
-INC_DIR = ./ex00
-INCS = $(wildcard $(INC_DIR)/*.hpp)
+# SERVER #########################
 
-SRC_DIR = ./ex00
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+SERVER_DIR = ./bank_server
 
-OBJ_DIR = ./ex00/obj
-OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+SERVER_INCS = $(wildcard $(SERVER_DIR)/*.hpp)
+SERVER_SRCS = $(wildcard $(SERVER_DIR)/*.cpp)
 
-all: $(OBJ_DIR) $(NAME)
+SERVER_OBJ_DIR = $(SERVER_DIR)/obj
+SERVER_OBJS = $(SERVER_SRCS:$(SERVER_SRC_DIR)/%.cpp=$(SERVER_OBJ_DIR)/%.o)
 
-$(OBJ_DIR):
-	@echo "${WHITE}Making the directory for object files...${RESET}"
-	@mkdir -p $(OBJ_DIR)
-	@echo "${GREEN}\\t$(OBJ_DIR) was successfully created.${RESET}"
+# CLIENT #########################
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(INCS)
-	@echo "${PURPLE}Compiling $< into $@...${RESET}"
+CLIENT_DIR = ./account_client
+
+CLIENT_INCS = $(wildcard $(CLIENT_DIR)/*.hpp)
+CLIENT_SRCS = $(wildcard $(CLIENT_DIR)/*.cpp)
+
+
+CLIENT_OBJ_DIR = $(CLIENT_DIR)/obj
+CLIENT_OBJS = $(CLIENT_SRCS:$(CLIENT_SRC_DIR)/%.cpp=$(CLIENT_OBJ_DIR)/%.o)
+
+# RULES ###############################
+
+#all: server client
+all: server
+
+# SERVER ##############################
+
+server: $(SERVER_NAME)
+
+$(SERVER_NAME): $(SERVER_OBJS)
+	@echo "${WHITE_BG}${BLACK}Building $(SERVER_NAME) and linking .o files...${RESET}"
+	$(CPP) $(FLAGS) $(SERVER_OBJS) -o $(SERVER_NAME)
+	@echo "${GREEN_BG}${WHITE}$(SERVER_NAME) successfully built and .o files linked!${RESET}"
+
+$(SERVER_OBJ_DIR)/%.o: $(SERVER_DIR)/%.cpp $(SERVER_INC)
+	@echo "${PURPLE_BG}${WHITE}Compiling $< into $@...${RESET}"
 	@mkdir -p $(@D)
-	@$(CPP) $(FLAGS) -I$(INC_DIR) -c $< -o $@
-	@echo "${GREEN}\\t$@ was successfully created.${RESET}"
+	@$(CPP) $(FLAGS) -I$(SERVER_DIR) -c $< -o $@
+	@echo "${GREEN_BG}${WHITE}$@ was successfully created.${RESET}"
 
-$(NAME): $(OBJS)
-	@echo "${WHITE_BG}${BLACK}Building $(NAME) and linking .o files...${RESET}"
-	$(CPP) $(FLAGS) $(OBJS) -o $(NAME)
-	@echo "${GREEN_BG}${WHITE}$(NAME) successfully built and .o files linked!${RESET}"
+# CLIENT ##############################
+
+client: $(CLIENT_NAME)
+
+$(CLIENT_NAME): $(CLIENT_OBJS)
+	@echo "${WHITE_BG}${BLACK}Building $(CLIENT_NAME) and linking .o files...${RESET}"
+	$(CPP) $(FLAGS) $(CLIENT_OBJS) -o $(CLIENT_NAME)
+	@echo "${GREEN_BG}${WHITE}$(CLIENT_NAME) successfully built and .o files linked!${RESET}"
+
+$(CLIENT_OBJ_DIR)/%.o: $(CLIENT_DIR)/%.cpp $(CLIENT_INC)
+	@echo "${PURPLE_BG}${WHITE}Compiling $< into $@...${RESET}"
+	@mkdir -p $(@D)
+	@$(CPP) $(FLAGS) -I$(CLIENT_DIR) -c $< -o $@
+	@echo "${GREEN_BG}${WHITE}$@ was successfully created.${RESET}"
+
+# CLEAN ##############################
 
 clean:
-	@echo "${YELLOW}Deleting $(OBJ_DIR) and .o files...${RESET}"
-	@rm -rf $(OBJ_DIR)
-	@echo "${GREEN}\\t$(OBJ_DIR) and .o files deleted!${RESET}"
+	@echo "${YELLOW_BG}${WHITE}Deleting $(SERVER_OBJ_DIR) and $(CLIENT_OBJ_DIR) .o files...${RESET}"
+	@rm -rf $(SERVER_OBJ_DIR)
+	@rm -rf $(CLIENT_OBJ_DIR)
+	@echo "${GREEN_BG}${WHITE}$(SERVER_OBJ_DIR) and $(CLIENT_OBJ_DIR) .o files deleted!${RESET}"
 
 fclean: clean
-	@echo "${RED}Deleting $(NAME)...${RESET}"
-	@rm -f $(NAME)
-	@echo "${GREEN}$(NAME) successfully deleted!${RESET}"
+	@echo "${RED_BG}${WHITE}Deleting $(SERVER_NAME) and $(CLIENT_NAME)...${RESET}"
+	@rm -f $(SERVER_NAME)
+	@rm -f $(CLIENT_NAME)
+	@echo "${GREEN_BG}${WHITE}$(SERVER_NAME) and $(CLIENT_NAME) successfully deleted!${RESET}"
 
 re: fclean all
-	@echo "${BLUE}Rebuilding $(NAME)...${RESET}"
-	@echo "${GREEN}\\t$(NAME) successfully rebuilt!${RESET}"
+	@echo "${BLUE}Rebuilding $(SERVER_NAME) and $(CLIENT_NAME)...${RESET}"
+	@echo "${GREEN_BG}${WHITE}$(SERVER_NAME) and $(CLIENT_NAME) successfully rebuilt!${RESET}"
 
 colors:
 	@echo "${BLACK}${WHITE_BG}white background...${RESET}"
@@ -80,4 +116,4 @@ colors:
 	@echo "${WHITE}white...${RESET}"
 	@echo "${RESET}normal...${RESET}"
 
-.PHONY: all clean fclean re colors
+.PHONY: all server client clean fclean re colors
