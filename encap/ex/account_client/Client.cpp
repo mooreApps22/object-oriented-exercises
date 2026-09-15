@@ -1,0 +1,95 @@
+#include "Client.hpp"
+#include <netinet/in.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <stdexcept>
+
+Client::Client(int port)
+	:	_port(port),
+		_socketFd(-1)
+{
+	setupSocket();
+	connectToServer();
+}
+
+Client::~Client()
+{
+	if (_socketFd != -1)
+		close(_socketFd);
+}
+
+void	Client::setupSocket()
+{
+	_socketFd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (_socketFd == -1)
+		throw std::runtime_error("socket() failed");
+}
+
+void	Client::connectToServer()
+{
+	struct sockaddr_in	serverAddress;
+
+	std::memset(&serverAddress, 0, sizeof(serverAddress));
+
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	serverAddress.sin_port = htons(_port);
+
+	if (connect(
+		_socketFd,
+		reinterpret_cast<struct sockaddr *>(&serverAddress),
+		sizeof(serverAddress)
+		) == -1)
+	{
+		throw std::runtime_error("connect() failed");
+	}
+}
+
+void	Client::run()
+{
+	char				receiveBuffer[1025];
+	char				choice;
+	ssize_t				bytesReceived;
+	static const int	BUF_SIZE = 1024;
+
+	for (;;)
+	{
+		bytesReceived = recv(_socketFd, receiveBuffer, BUF_SIZE, 0);
+
+		if (bytesReceived == -1)
+			throw std::runtime_error("recv() failed");
+
+		if (bytesReceived == 0)
+		{
+			std::cout << "Server disconnected." << std::endl;
+			break;
+		}
+
+		receiveBuffer[bytesReceived] = '\0';
+		
+		std::cout << receiveBuffer;
+		std::cin >> choice;
+
+		if (!std::cin)
+			break;
+
+		char request[3];
+
+		request[0] = choice;
+		request[1] = '\n';
+		request[2] = '\0';
+
+		if (send(_socketFd, request, 2, 0) == -1)
+			throw std::runtime_error("send() failed");
+
+		if (choice == 'F' || choice == 'f')
+			break;
+	}
+}

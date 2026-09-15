@@ -48,8 +48,7 @@ CLIENT_OBJS = $(CLIENT_SRCS:$(CLIENT_SRC_DIR)/%.cpp=$(CLIENT_OBJ_DIR)/%.o)
 
 # RULES ###############################
 
-#all: server client
-all: server
+all: server client
 
 # SERVER ##############################
 
