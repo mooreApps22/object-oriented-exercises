@@ -37,7 +37,7 @@ SERVER_OBJS = $(SERVER_SRCS:$(SERVER_SRC_DIR)/%.cpp=$(SERVER_OBJ_DIR)/%.o)
 
 # CLIENT #########################
 
-CLIENT_DIR = ./account_client
+CLIENT_DIR = ./customer_client
 
 CLIENT_INCS = $(wildcard $(CLIENT_DIR)/*.hpp)
 CLIENT_SRCS = $(wildcard $(CLIENT_DIR)/*.cpp)

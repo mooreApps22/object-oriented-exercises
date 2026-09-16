@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <string>
 #include <iostream>
 #include <stdexcept>
 
@@ -224,4 +225,40 @@ void Server::sendMenu(int clientFd)
 		"Select an option[A-F]: ";
 
 	send(clientFd, menu, std::strlen(menu), 0);
+}
+
+void	Server::handleClientRequest(int clientFd, const std::string &request)
+{
+	if (request.empty())
+		return;
+	switch (request[0])
+	{
+		case 'A':
+		case 'a':
+			// View Account Details
+			break;
+		case 'B':
+		case 'b':
+			// Deposit
+			break;
+		case 'C':
+		case 'c':
+			// Withdrawal
+			break;
+		case 'D':
+		case 'd':
+			// Apply for Loan
+			break;
+		case 'E':
+		case 'e':
+			// Edit Account Details
+			break;
+		case 'F':
+		case 'f':
+			// Disconnect
+			break;
+		default:
+			// Invalid request
+			break;
+	}
 }
