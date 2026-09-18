@@ -221,7 +221,7 @@ void	Server::_disconnectClient(int pollIndex)
 
 void Server::_sendMenu(int clientFd)
 {
-	const char	*menu =
+	const char	*mainMenu =
 		"\n"
 		"============================\n"
 		"          BANK SERVER       \n"
@@ -240,7 +240,7 @@ void Server::_sendMenu(int clientFd)
 		"============================\n"
 		"Select an option[A-K]: ";
 
-	send(clientFd, menu, std::strlen(menu), 0);
+	send(clientFd, mainMenu, std::strlen(mainMenu), 0);
 }
 
 void	Server::_handleClientRequest(int clientFd, const std::string &request)
@@ -262,13 +262,11 @@ void	Server::_handleClientRequest(int clientFd, const std::string &request)
 		case 'C':
 		case 'c':
 			// Open New Account
-
 			_bank.createAccount(clientFd, "TMP ACCOUNT NAME");
 			break;
 		case 'D':
 		case 'd':
 			// Deposit
-			
 			break;
 		case 'E':
 		case 'e':
