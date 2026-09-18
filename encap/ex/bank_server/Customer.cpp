@@ -40,7 +40,7 @@ double	Customer::getCash() const
 	return _cash;
 }
 
-const std::vector<int>	Customer::&getAccountIds() const
+const std::vector<int>	&Customer::getAccountIds() const
 {
 	return _accountIds;
 }

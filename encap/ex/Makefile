@@ -33,7 +33,7 @@ SERVER_INCS = $(wildcard $(SERVER_DIR)/*.hpp)
 SERVER_SRCS = $(wildcard $(SERVER_DIR)/*.cpp)
 
 SERVER_OBJ_DIR = $(SERVER_DIR)/obj
-SERVER_OBJS = $(SERVER_SRCS:$(SERVER_SRC_DIR)/%.cpp=$(SERVER_OBJ_DIR)/%.o)
+SERVER_OBJS = $(SERVER_SRCS:$(SERVER_DIR)/%.cpp=$(SERVER_OBJ_DIR)/%.o)
 
 # CLIENT #########################
 
@@ -44,22 +44,20 @@ CLIENT_SRCS = $(wildcard $(CLIENT_DIR)/*.cpp)
 
 
 CLIENT_OBJ_DIR = $(CLIENT_DIR)/obj
-CLIENT_OBJS = $(CLIENT_SRCS:$(CLIENT_SRC_DIR)/%.cpp=$(CLIENT_OBJ_DIR)/%.o)
+CLIENT_OBJS = $(CLIENT_SRCS:$(CLIENT_DIR)/%.cpp=$(CLIENT_OBJ_DIR)/%.o)
 
 # RULES ###############################
 
-all: server client
+all: $(SERVER_NAME) $(CLIENT_NAME)
 
 # SERVER ##############################
-
-server: $(SERVER_NAME)
 
 $(SERVER_NAME): $(SERVER_OBJS)
 	@echo "${WHITE_BG}${BLACK}Building $(SERVER_NAME) and linking .o files...${RESET}"
 	$(CPP) $(FLAGS) $(SERVER_OBJS) -o $(SERVER_NAME)
 	@echo "${GREEN_BG}${WHITE}$(SERVER_NAME) successfully built and .o files linked!${RESET}"
 
-$(SERVER_OBJ_DIR)/%.o: $(SERVER_DIR)/%.cpp $(SERVER_INC)
+$(SERVER_OBJ_DIR)/%.o: $(SERVER_DIR)/%.cpp $(SERVER_INCS)
 	@echo "${PURPLE_BG}${WHITE}Compiling $< into $@...${RESET}"
 	@mkdir -p $(@D)
 	@$(CPP) $(FLAGS) -I$(SERVER_DIR) -c $< -o $@
@@ -67,14 +65,12 @@ $(SERVER_OBJ_DIR)/%.o: $(SERVER_DIR)/%.cpp $(SERVER_INC)
 
 # CLIENT ##############################
 
-client: $(CLIENT_NAME)
-
 $(CLIENT_NAME): $(CLIENT_OBJS)
 	@echo "${WHITE_BG}${BLACK}Building $(CLIENT_NAME) and linking .o files...${RESET}"
 	$(CPP) $(FLAGS) $(CLIENT_OBJS) -o $(CLIENT_NAME)
 	@echo "${GREEN_BG}${WHITE}$(CLIENT_NAME) successfully built and .o files linked!${RESET}"
 
-$(CLIENT_OBJ_DIR)/%.o: $(CLIENT_DIR)/%.cpp $(CLIENT_INC)
+$(CLIENT_OBJ_DIR)/%.o: $(CLIENT_DIR)/%.cpp $(CLIENT_INCS)
 	@echo "${PURPLE_BG}${WHITE}Compiling $< into $@...${RESET}"
 	@mkdir -p $(@D)
 	@$(CPP) $(FLAGS) -I$(CLIENT_DIR) -c $< -o $@
@@ -115,4 +111,4 @@ colors:
 	@echo "${WHITE}white...${RESET}"
 	@echo "${RESET}normal...${RESET}"
 
-.PHONY: all server client clean fclean re colors
+.PHONY: all clean fclean re colors

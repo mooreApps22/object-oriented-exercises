@@ -2,6 +2,8 @@
 
 #include <netinet/in.h>
 #include <poll.h>
+#include <string>
+#include "Bank.hpp"
 
 class Server {
 	private:
@@ -11,20 +13,21 @@ class Server {
 		int					_listenFd;
 		int					_pollFdCount;
 		struct pollfd		_pollFds[MAX_CLIENTS];
+		Bank				_bank;
 
 		Server();
 		Server(const Server &other);
 		Server &operator=(const Server &other);
 
-		void	setupSocket();
-		void	initializePollFds();
+		void	_setupSocket();
+		void	_initializePollFds();
 
-		void	acceptClient();
-		void	handleClient(int pollIndex);
-		void	disconnectClient(int pollIndex);
+		void	_acceptClient();
+		void	_handleClient(int pollIndex);
+		void	_disconnectClient(int pollIndex);
 
-		void	sendMenu(int clientFd);
-		void	handleClientRequest(int clientFd, const std::string &request);
+		void	_sendMenu(int clientFd);
+		void	_handleClientRequest(int clientFd, const std::string &request);
 	public:
 		Server(int port);
 		~Server();

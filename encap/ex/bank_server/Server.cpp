@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Bank.hpp"
 
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -16,8 +17,8 @@ Server::Server(int port)
 	_listenFd(-1),
 	_pollFdCount(1)
 {
-	setupSocket();
-	initializePollFds();
+	_setupSocket();
+	_initializePollFds();
 }
 
 Server::~Server()
@@ -29,7 +30,7 @@ Server::~Server()
 	}
 }
 
-void	Server::setupSocket()
+void	Server::_setupSocket()
 {
 	struct	sockaddr_in	serverAddress;
 
@@ -62,7 +63,7 @@ void	Server::setupSocket()
 	}
 }
 
-void	Server::initializePollFds()
+void	Server::_initializePollFds()
 {
 	for (int i = 0; i < MAX_CLIENTS; ++i)
 	{
@@ -93,14 +94,14 @@ void	Server::run()
 				continue;
 			
 			if(_pollFds[i].fd == _listenFd)
-				acceptClient();
+				_acceptClient();
 			else
-				handleClient(i);
+				_handleClient(i);
 		}
 	}
 }
 
-void	Server::acceptClient()
+void	Server::_acceptClient()
 {
 	struct sockaddr_in	clientAddress;
 	socklen_t			clientAddressSize;
@@ -129,15 +130,19 @@ void	Server::acceptClient()
 
 	++_pollFdCount;
 
+	_bank.addCustomer(clientFd);
+
 	std::cout
 		<< "Customer connected. fd = "
 		<< clientFd
 		<< std::endl;
 
-	sendMenu(clientFd);
+//	std::count << _bank << std::endl;
+
+	_sendMenu(clientFd);
 }
 
-void	Server::handleClient(int pollIndex)
+void	Server::_handleClient(int pollIndex)
 {
 	char	buffer[BUF_SIZE + 1];
 	int		clientFd;
@@ -154,7 +159,7 @@ void	Server::handleClient(int pollIndex)
 
 	if (bytesRead <= 0)
 	{
-		disconnectClient(pollIndex);
+		_disconnectClient(pollIndex);
 		return;
 	}
 
@@ -169,7 +174,7 @@ void	Server::handleClient(int pollIndex)
 	/*
 	 * To implement next:
 	 *
-	 * handleCustomerRequest(clientFd, buffer);
+	 * handleClientRequest(clientFd, buffer);
 	 *
 	 * Menu:
 	 * A: View Account Details
@@ -181,10 +186,12 @@ void	Server::handleClient(int pollIndex)
 	 * 
 	 */
 
-	sendMenu(clientFd);
+	 _handleClientRequest(clientFd, buffer);
+
+	_sendMenu(clientFd);
 }
 
-void	Server::disconnectClient(int pollIndex)
+void	Server::_disconnectClient(int pollIndex)
 {
 	int	clientFd = _pollFds[pollIndex].fd;
 
@@ -192,6 +199,10 @@ void	Server::disconnectClient(int pollIndex)
 		<< "Customer disconnected. fd = "
 		<< clientFd
 		<< std::endl;
+
+	_bank.removeCustomer(clientFd);
+
+	std::cout << _bank << std::endl;
 
 	close(clientFd);
 
@@ -208,26 +219,31 @@ void	Server::disconnectClient(int pollIndex)
 	_pollFds[_pollFdCount].revents = 0;
 }
 
-void Server::sendMenu(int clientFd)
+void Server::_sendMenu(int clientFd)
 {
 	const char	*menu =
 		"\n"
 		"============================\n"
 		"          BANK SERVER       \n"
 		"============================\n"
-		"A. View Account Details\n"
-		"B. Deposit\n"
-		"C. Withdraw Funds\n"
-		"D. Apply for Loan\n"
-		"E. Edit Account Details\n"
-		"F. Disconnect\n"
+		"A. View Customer Details\n"
+		"B. View Accounts\n"
+		"C. Open New Account\n"
+		"D. Deposit\n"
+		"E. Withdraw\n"
+		"F. Modify Acount\n"
+		"G. Delete Account\n"
+		"H. Apply for Loan\n"
+		"I. View Loans\n"
+		"J. Make Loan Payment\n"
+		"K. Disconnect\n"
 		"============================\n"
-		"Select an option[A-F]: ";
+		"Select an option[A-K]: ";
 
 	send(clientFd, menu, std::strlen(menu), 0);
 }
 
-void	Server::handleClientRequest(int clientFd, const std::string &request)
+void	Server::_handleClientRequest(int clientFd, const std::string &request)
 {
 	if (request.empty())
 		return;
@@ -235,30 +251,67 @@ void	Server::handleClientRequest(int clientFd, const std::string &request)
 	{
 		case 'A':
 		case 'a':
-			// View Account Details
+			// View Customer Details
+			
 			break;
 		case 'B':
 		case 'b':
-			// Deposit
+			// View Accounts
+
 			break;
 		case 'C':
 		case 'c':
-			// Withdrawal
+			// Open New Account
+
+			_bank.createAccount(clientFd, "TMP ACCOUNT NAME");
 			break;
 		case 'D':
 		case 'd':
-			// Apply for Loan
+			// Deposit
+			
 			break;
 		case 'E':
 		case 'e':
-			// Edit Account Details
+			// Withdraw
+
 			break;
 		case 'F':
 		case 'f':
+			// Modify Account
+
+			break;
+		case 'G':
+		case 'g':
+			// Delete Account
+
+			break;
+		case 'H':
+		case 'h':
+			// Apply for Loan
+
+			break;
+		case 'I':
+		case 'i':
+			// View Loans
+
+			break;
+		case 'J':
+		case 'j':
+			//  Make Loan Payment
+
+			break;
+		case 'K':
+		case 'k':
 			// Disconnect
+
 			break;
 		default:
 			// Invalid request
+			const char* res =
+			"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+			"\n      Invalid request      \n"
+			"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+			send(clientFd, res, std::strlen(res), 0);
 			break;
 	}
 }

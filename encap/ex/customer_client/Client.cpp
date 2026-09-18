@@ -89,7 +89,7 @@ void	Client::run()
 		if (send(_socketFd, request, 2, 0) == -1)
 			throw std::runtime_error("send() failed");
 
-		if (choice == 'F' || choice == 'f')
+		if (choice == 'K' || choice == 'k')
 			break;
 	}
 }
