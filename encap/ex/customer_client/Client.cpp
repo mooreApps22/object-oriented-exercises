@@ -9,6 +9,7 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 Client::Client(int port)
 	:	_port(port),
@@ -55,9 +56,9 @@ void	Client::connectToServer()
 void	Client::run()
 {
 	char				receiveBuffer[1025];
-	char				choice;
 	ssize_t				bytesReceived;
 	static const int	BUF_SIZE = 1024;
+	std::string			input;
 
 	for (;;)
 	{
@@ -75,21 +76,21 @@ void	Client::run()
 		receiveBuffer[bytesReceived] = '\0';
 		
 		std::cout << receiveBuffer;
-		std::cin >> choice;
+		std::getline(std::cin, input);
 
-		if (!std::cin)
+		if(!std::cin)
 			break;
 
-		char request[3];
-
-		request[0] = choice;
-		request[1] = '\n';
-		request[2] = '\0';
-
-		if (send(_socketFd, request, 2, 0) == -1)
+		input += '\n';
+		
+		if (send(
+			_socketFd,
+			input.c_str(),
+			input.size(),
+			0
+		) == -1)
+		{
 			throw std::runtime_error("send() failed");
-
-		if (choice == 'K' || choice == 'k')
-			break;
+		}
 	}
 }

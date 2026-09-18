@@ -4,6 +4,7 @@
 #include <poll.h>
 #include <string>
 #include "Bank.hpp"
+#include <map>
 
 class Server {
 	private:
@@ -14,6 +15,14 @@ class Server {
 		int					_pollFdCount;
 		struct pollfd		_pollFds[MAX_CLIENTS];
 		Bank				_bank;
+
+		enum ClientState
+		{
+			MAIN_MENU,
+			WAITING_FOR_ACCOUNT_NAME
+		};
+		std::map<int, ClientState>	_clientStates;
+		std::map<int, std::string>	_clientBuffers;
 
 		Server();
 		Server(const Server &other);
