@@ -6,6 +6,8 @@
 #include "Bank.hpp"
 #include <map>
 
+
+
 class Server {
 	private:
 		static const int	BUF_SIZE = 1024;
@@ -19,10 +21,20 @@ class Server {
 		enum ClientState
 		{
 			MAIN_MENU,
-			WAITING_FOR_ACCOUNT_NAME
+			WAITING_FOR_ACCOUNT_NAME,
+			WAITING_FOR_DEPOSIT_ACCOUNT,
+			WAITING_FOR_DEPOSIT_AMOUNT,
+
 		};
-		std::map<int, ClientState>	_clientStates;
-		std::map<int, std::string>	_clientBuffers;
+
+		struct ClientSession
+		{
+			ClientState	state;
+			std::string	buffer;
+			int			selectedAccountId;
+		};
+
+		std::map<int, ClientSession>	_clientSessions;
 
 		Server();
 		Server(const Server &other);
