@@ -36,20 +36,8 @@ void Server::_sendMenu(int clientFd)
 	send(clientFd, mainMenu, std::strlen(mainMenu), 0);
 }
 
-void	Server::_handleClientRequest(int clientFd, const std::string &request)
+void	Server::_handleMainMenu(int clientFd, const std::string &request)
 {
-	if (request.empty())
-		return;
-
-	if (_clientSessions[clientFd].state == WAITING_FOR_ACCOUNT_NAME)
-	{
-		_bank.createAccount(clientFd, request);
-		_clientSessions[clientFd].state = MAIN_MENU;
-		_sendMenu(clientFd);
-
-		return;
-	}
-
 	switch (request[0])
 	{
 		case 'A':
@@ -119,6 +107,24 @@ void	Server::_handleClientRequest(int clientFd, const std::string &request)
 			"\n      Invalid request      \n"
 			"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
 			send(clientFd, res, std::strlen(res), 0);
+			break;
+	}
+}
+
+void	Server::_handleClientRequest(int clientFd, const std::string &request)
+{
+	ClientSession &session = _clientSessions[clientFd];
+
+	switch(session.state)
+	{
+		case MAIN_MENU:
+			_handleMainMenu(clientFd, request);
+			break;
+		case WAITING_FOR_ACCOUNT_NAME:
+			break;
+		case WAITING_FOR_DEPOSIT_ACCOUNT:
+			break;
+		case WAITING_FOR_DEPOSIT_AMOUNT:
 			break;
 	}
 }

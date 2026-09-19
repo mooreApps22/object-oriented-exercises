@@ -48,6 +48,7 @@ class Server {
 		void	_disconnectClient(int pollIndex);
 
 		void	_sendMenu(int clientFd);
+		void	_handleMainMenu(int clientFd, const std::string &request);
 		void	_handleClientRequest(int clientFd, const std::string &request);
 	public:
 		Server(int port);
