@@ -24,7 +24,13 @@ class Server {
 			WAITING_FOR_ACCOUNT_NAME,
 			WAITING_FOR_DEPOSIT_ACCOUNT,
 			WAITING_FOR_DEPOSIT_AMOUNT,
-
+			WAITING_FOR_WITHDRAW_ACCOUNT,
+			WAITING_FOR_WITHDRAW_AMOUNT,
+			WAITING_FOR_DELETE_ACCOUNT,
+			WAITING_FOR_MODIFY_ACCOUNT,
+			WAITING_FOR_MODIFY_ACCOUNT_NAME,
+			WAITING_FOR_LOAN_ACCOUNT,
+			WAITING_FOR_LOAN_AMOUNT
 		};
 
 		struct ClientSession
@@ -48,9 +54,24 @@ class Server {
 		void	_disconnectClient(int pollIndex);
 
 		void	_sendMainMenu(int clientFd);
-		void 	_sendInvaidRequestMessage(int clientFd);
+		void 	_sendSimplePrompt(int clientFd, const char *response);
+		void 	_sendInvalidRequestMessage(int clientFd);
+		void 	_sendAccountNamePrompt(int clientFd);
+		void 	_sendDepositAccountNamePrompt(int clientFd);
+
 		void	_handleMainMenu(int clientFd, const std::string &request);
 		void	_handleClientRequest(int clientFd, const std::string &request);
+
+		void	_handleAccountName(int clientFd, const std::string &request);
+		void	_handleDepositAccount(int clientFd, const std::string &request);
+		void	_handleDepositAmount(int clientFd, const std::string &request);
+		void	_handleWithdrawAccount(int clientFd, const std::string &request);
+		void	_handleWithdrawAmount(int clientFd, const std::string &request);
+		void	_handleLoanAccount(int clientFd, const std::string &request);
+		void	_handleLoanAmount(int clientFd, const std::string &request);
+		void	_handleDeleteAccount(int clientFd, const std::string &request);
+		void	_handleModifyAccount(int clientFd, const std::string &request);
+		void	_handleModifyAccountName(int clientFd, const std::string &request);
 	public:
 		Server(int port);
 		~Server();
