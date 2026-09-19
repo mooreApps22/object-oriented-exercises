@@ -47,7 +47,8 @@ class Server {
 		void	_handleClient(int pollIndex);
 		void	_disconnectClient(int pollIndex);
 
-		void	_sendMenu(int clientFd);
+		void	_sendMainMenu(int clientFd);
+		void 	_sendInvaidRequestMessage(int clientFd);
 		void	_handleMainMenu(int clientFd, const std::string &request);
 		void	_handleClientRequest(int clientFd, const std::string &request);
 	public:

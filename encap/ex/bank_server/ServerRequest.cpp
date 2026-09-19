@@ -12,7 +12,17 @@
 #include <iostream>
 #include <stdexcept>
 
-void Server::_sendMenu(int clientFd)
+
+void Server::_sendInvaidRequestMessage(int clientFd)
+{
+	const char* res =
+	"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+	"\n      Invalid request      \n"
+	"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+	send(clientFd, res, std::strlen(res), 0);
+}
+
+void Server::_sendMainMenu(int clientFd)
 {
 	const char	*mainMenu =
 		"\n"
@@ -102,11 +112,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			break;
 		default:
 			// Invalid request
-			const char* res =
-			"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-			"\n      Invalid request      \n"
-			"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
-			send(clientFd, res, std::strlen(res), 0);
+			_sendInvaidRequestMessage(clientFd);
 			break;
 	}
 }

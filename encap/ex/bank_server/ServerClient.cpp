@@ -51,7 +51,7 @@ void	Server::_acceptClient()
 
 //	std::count << _bank << std::endl;
 
-	_sendMenu(clientFd);
+	_sendMainMenu(clientFd);
 }
 
 void	Server::_handleClient(int pollIndex)
@@ -94,8 +94,6 @@ void	Server::_handleClient(int pollIndex)
 		<< std::endl;
 
 	_handleClientRequest(clientFd, request);
-
-	//_sendMenu(clientFd);
 }
 
 void	Server::_disconnectClient(int pollIndex)
