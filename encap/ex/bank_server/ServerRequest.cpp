@@ -18,6 +18,69 @@ void Server::_sendSimplePrompt(int clientFd, const char *response)
 	send(clientFd, response, std::strlen(response), 0);
 }
 
+void Server::_sendAccountsDetails(int clientFd)
+{
+	const Customer				*customer;
+	const Account				*account;
+	std::ostringstream			response;
+	std::string					message;
+
+	customer = _bank.getCustomer(clientFd);
+
+	if (customer == NULL)
+	{
+		_sendSimplePrompt(
+			clientFd,
+			"Unable to find customer.\n"
+		);
+		return;
+	}
+
+	const std::vector<int>	&accountIds = customer->getAccountIds();
+	
+	response
+		<< "\n"
+		<< "================================\n"
+		<< "=           ACCOUNTS           =\n"
+		<< "================================\n";
+
+	if (accountIds.empty())
+	{
+		response
+			<< "No accounts found.\n";
+	}
+	else
+	{
+		for (std::vector<int>::const_iterator it = accountIds.begin();
+				it != accountIds.end();
+				++it)
+		{
+			account = _bank.getAccount(*it);
+
+			if (account != NULL)
+			{
+				response
+					<< "Account ID: "
+					<< account->getId()
+					<< " | "
+					<< "Name: "
+					<< account->getName()
+					<< " | "
+					<< "Balance: "
+					<< account->getBalance()
+					<< "\n";
+			}
+		}
+	}
+
+	response
+		<< "================================\n";
+
+	message = response.str();
+
+	_sendSimplePrompt(clientFd, message.c_str());
+}
+
 void Server::_sendMainMenu(int clientFd)
 {
 	const char	*mainMenu =
@@ -478,6 +541,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// View Customer Details
 			_sendSimplePrompt(clientFd, "You Wish to See your Customer Details: \n");
+			_sendCustomerDetails(clientFd);
 			_sendMainMenu(clientFd);
 			break;
 		}
@@ -568,6 +632,44 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			break;
 		}
 	}
+}
+
+void	Server::_sendCustomerDetails(int clientFd)
+{
+	const Customer		*customer;
+	std::ostringstream	response;
+
+	customer = _bank.getCustomer(clientFd);
+
+	if (customer == NULL)
+	{
+		_sendSimplePrompt(
+			clientFd,
+			"Unable to find customer.\n"
+		);
+		return;
+	}
+
+	response
+		<< "\n"
+		<< "================================\n"
+		<< "=      CUSTOMER DETAILS        =\n"
+		<< "================================\n"
+		<< "Customer ID: "
+		<< customer->getId()
+		<< "\n"
+		<< "Cash: $"
+		<< customer->getCash()	
+		<< "\n"
+		<< "Accounts: "
+		<< customer->getAccountIds().size()	
+		<< "\n"
+		<< "================================\n";
+
+	_sendSimplePrompt(
+		clientFd,
+		response.str().c_str()
+	);
 }
 
 void	Server::_handleClientRequest(int clientFd, const std::string &request)

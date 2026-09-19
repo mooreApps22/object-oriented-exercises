@@ -59,6 +59,9 @@ class Server {
 		void 	_sendAccountNamePrompt(int clientFd);
 		void 	_sendDepositAccountNamePrompt(int clientFd);
 
+		void	_sendCustomerDetails(int clientFd);
+		void 	_sendAccountsDetails(int clientFd);
+
 		void	_handleMainMenu(int clientFd, const std::string &request);
 		void	_handleClientRequest(int clientFd, const std::string &request);
 
