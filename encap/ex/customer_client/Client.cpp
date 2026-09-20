@@ -59,7 +59,7 @@ void	Client::run()
 
 	for (;;)
 	{
-		if (_receiveResponse() == false)
+		if (_receiveResponse() == SERVER_DISCONNECTED)
 			break;
 
 		std::getline(std::cin, input);

@@ -102,7 +102,7 @@ bool	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			//  Make Loan Payment
 			_clientSessions[clientFd].state = WAITING_FOR_LOAN_PAYMENT_ID;
-			_sendSimplePrompt(clientFd, "Enter Account ID for Loan: ");
+			_sendSimplePrompt(clientFd, "Enter Loan ID for Payment: ");
 			_endResponse(clientFd);
 			return false;
 		}
@@ -111,7 +111,7 @@ bool	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// Disconnect
 			_sendSimplePrompt(clientFd, "You have chosen to Disconnect. Goodbye.\n");
-			_endResponse(clientFd);
+			_sendSimplePrompt(clientFd, "<DISCONNECT>");
 			return true;
 		}
 		default:

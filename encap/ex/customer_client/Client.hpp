@@ -2,6 +2,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+enum ResponseStatus
+{
+	RESPONSE_COMPLETE,
+	SERVER_DISCONNECTED
+};
+
 class Client
 {
 	private:
@@ -12,9 +18,9 @@ class Client
 		Client(const Client &other);
 		Client	&operator=(const Client &other);
 
-		void	_setupSocket();
-		void	_connectToServer();
-		bool	_receiveResponse();
+		void			_setupSocket();
+		void			_connectToServer();
+		ResponseStatus	_receiveResponse();
 
 	public:
 		Client(int port);
