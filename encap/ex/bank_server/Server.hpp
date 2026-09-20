@@ -65,8 +65,8 @@ class Server {
 		void 	_sendAccountsDetails(int clientFd);
 		void 	_sendLoansDetails(int clientFd);
 
-		void	_handleMainMenu(int clientFd, const std::string &request);
-		void	_handleClientRequest(int clientFd, const std::string &request);
+		bool	_handleMainMenu(int clientFd, const std::string &request);
+		bool	_handleClientRequest(int clientFd, const std::string &request);
 
 		void	_handleAccountName(int clientFd, const std::string &request);
 		void	_handleDepositAccount(int clientFd, const std::string &request);

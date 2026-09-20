@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <ostream>
 #include "Account.hpp"
 #include "Customer.hpp"
 #include "Loan.hpp"

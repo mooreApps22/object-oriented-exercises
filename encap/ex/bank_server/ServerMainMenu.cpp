@@ -13,7 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 
-void	Server::_handleMainMenu(int clientFd, const std::string &request)
+bool	Server::_handleMainMenu(int clientFd, const std::string &request)
 {
 	switch (request[0])
 	{
@@ -24,7 +24,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_sendSimplePrompt(clientFd, "You Wish to See your Customer Details: \n");
 			_sendCustomerDetails(clientFd);
 			_sendMainMenu(clientFd);
-			break;
+			return false;
 		}
 		case 'B':
 		case 'b':
@@ -33,7 +33,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_sendSimplePrompt(clientFd, "This is a List of All your Accounts: \n");
 			_sendAccountsDetails(clientFd);
 			_sendMainMenu(clientFd);
-			break;
+			return false;
 		}
 		case 'C':
 		case 'c':
@@ -42,7 +42,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_ACCOUNT_NAME;
 			_sendSimplePrompt(clientFd, "Enter the New Account Name: ");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'D':
 		case 'd':
@@ -51,7 +51,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_DEPOSIT_ACCOUNT;
 			_sendSimplePrompt(clientFd, "Enter an Account ID for Your Deposit: ");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'E':
 		case 'e':
@@ -60,7 +60,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_WITHDRAW_ACCOUNT;
 			_sendSimplePrompt(clientFd, "Enter an Account ID for Your Withdrawal: ");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'F':
 		case 'f':
@@ -69,7 +69,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_MODIFY_ACCOUNT;
 			_sendSimplePrompt(clientFd, "Enter Account ID You Want to Modify: ");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'G':
 		case 'g':
@@ -78,7 +78,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_DELETE_ACCOUNT;
 			_sendSimplePrompt(clientFd, "You Wish to Delete an Account: \n");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'H':
 		case 'h':
@@ -87,7 +87,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_LOAN_AMOUNT;
 			_sendSimplePrompt(clientFd, "Enter loan amount: ");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'I':
 		case 'i':
@@ -95,7 +95,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			// View Loans
 			_sendLoansDetails(clientFd);
 			_sendMainMenu(clientFd);
-			break;
+			return false;
 		}
 		case 'J':
 		case 'j':
@@ -104,21 +104,22 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			_clientSessions[clientFd].state = WAITING_FOR_LOAN_PAYMENT_ID;
 			_sendSimplePrompt(clientFd, "Enter Account ID for Loan: ");
 			_endResponse(clientFd);
-			break;
+			return false;
 		}
 		case 'K':
 		case 'k':
 		{
 			// Disconnect
 			_sendSimplePrompt(clientFd, "You have chosen to Disconnect. Goodbye.\n");
-			break;
+			_endResponse(clientFd);
+			return true;
 		}
 		default:
 		{
 			// Invalid request
 			_sendSimplePrompt(clientFd, "That is an Invalid Request. Please try again.\n");
 			_sendMainMenu(clientFd);
-			break;
+			return false;
 		}
 	}
 }

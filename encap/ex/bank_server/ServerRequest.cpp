@@ -13,15 +13,14 @@
 #include <sstream>
 #include <stdexcept>
 
-void	Server::_handleClientRequest(int clientFd, const std::string &request)
+bool	Server::_handleClientRequest(int clientFd, const std::string &request)
 {
 	ClientSession &session = _clientSessions[clientFd];
 
 	switch(session.state)
 	{
 		case MAIN_MENU:
-			_handleMainMenu(clientFd, request);
-			break;
+			return _handleMainMenu(clientFd, request);
 		case WAITING_FOR_ACCOUNT_NAME:
 			_handleAccountName(clientFd, request);
 			break;
@@ -56,4 +55,6 @@ void	Server::_handleClientRequest(int clientFd, const std::string &request)
 			_handleLoanPaymentAmount(clientFd, request);
 			break;
 	}
+
+	return false;
 }

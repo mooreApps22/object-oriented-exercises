@@ -94,7 +94,8 @@ void	Server::_handleClient(int pollIndex)
 		<< request
 		<< std::endl;
 
-	_handleClientRequest(clientFd, request);
+	if (_handleClientRequest(clientFd, request))
+		_disconnectClient(pollIndex);
 }
 
 void	Server::_disconnectClient(int pollIndex)

@@ -123,9 +123,6 @@ bool	Bank::makeLoanPayment(int customerId, int loanId, double amount)
 	if (customer == NULL || loan == NULL)
 		return false;
 
-	if (loan->getBorrower() != customerId)
-		return false;
-
 	if (amount <= 0)
 		return false;
 
@@ -140,13 +137,13 @@ bool	Bank::makeLoanPayment(int customerId, int loanId, double amount)
 
 	if (loan->_makePayment(amount) == false)
 	{
-		customer->_addCash(amount);
+		customer->_addAccount(amount);
 		return false;
 	}
 
 	_liquidity += amount;
-	return true;
 
+	return true;
 }
 
 
