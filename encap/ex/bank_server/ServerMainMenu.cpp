@@ -59,6 +59,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			// Withdraw
 			_clientSessions[clientFd].state = WAITING_FOR_WITHDRAW_ACCOUNT;
 			_sendSimplePrompt(clientFd, "Enter an Account ID for Your Withdrawal: ");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'F':
@@ -67,6 +68,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			// Modify Account
 			_clientSessions[clientFd].state = WAITING_FOR_MODIFY_ACCOUNT;
 			_sendSimplePrompt(clientFd, "Enter Account ID You Want to Modify: ");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'G':
@@ -75,21 +77,22 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			// Delete Account
 			_clientSessions[clientFd].state = WAITING_FOR_DELETE_ACCOUNT;
 			_sendSimplePrompt(clientFd, "You Wish to Delete an Account: \n");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'H':
 		case 'h':
 		{
 			// Apply for Loan
-			_sendSimplePrompt(clientFd, "You Wish to Apply for a Loan: \n");
-			_handleLoanAccount(clientFd, request);
+			_clientSessions[clientFd].state = WAITING_FOR_LOAN_AMOUNT;
+			_sendSimplePrompt(clientFd, "Enter loan amount: ");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'I':
 		case 'i':
 		{
 			// View Loans
-			_sendSimplePrompt(clientFd, "These are you current Loans: \n");
 			_sendLoansDetails(clientFd);
 			_sendMainMenu(clientFd);
 			break;
@@ -98,7 +101,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		case 'j':
 		{
 			//  Make Loan Payment
-			_clientSessions[clientFd].state = WAITING_FOR_LOAN_ACCOUNT;
+			_clientSessions[clientFd].state = WAITING_FOR_LOAN_PAYMENT_AMOUNT;
 			_sendSimplePrompt(clientFd, "Enter Account ID for Loan: ");
 			break;
 		}

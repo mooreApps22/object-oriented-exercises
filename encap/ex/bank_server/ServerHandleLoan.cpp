@@ -13,47 +13,6 @@
 #include <sstream>
 #include <stdexcept>
 
-void	Server::_handleLoanAccount(
-	int clientFd,
-	const std::string &request)
-{
-	ClientSession		&session = _clientSessions[clientFd];
-	std::istringstream	input(request);
-	const Account		*account;
-	int					accountId;
-	char				extra;
-
-	if (!(input >> accountId) || (input >> extra))
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Invalid Account ID.\n"
-			"Enter Account ID For Loan: "
-		);
-		return ;
-	}
-
-	account = _bank.getAccount(accountId);
-	
-	if (account == NULL)
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Account not found.\n"
-			"Enter Account ID for Loan: "
-		);
-		return;
-	}
-
-	session.selectedAccountId = accountId;
-	session.state = WAITING_FOR_LOAN_AMOUNT;
-
-	_sendSimplePrompt(
-		clientFd,
-		"Enter Loan Amount: "
-	);
-}
-
 void	Server::_handleLoanAmount(int clientFd, const std::string &request)
 {
 	ClientSession		&session = _clientSessions[clientFd];
@@ -107,6 +66,88 @@ void	Server::_handleLoanAmount(int clientFd, const std::string &request)
 	);
 
 	session.selectedAccountId = -1;
+	session.state = MAIN_MENU;
+	_sendMainMenu(clientFd);
+}
+
+void	Server::_handleLoanPaymentId(int clientFd, const std::string &request)
+{
+	ClientSession			&session = _clientSessions[clientFd];
+	std::istringstream		input(request);
+	int						loanId;
+	char					extra;
+
+	if (!(input >> loanId) || (input >> extra))
+	{
+		_sendSimplePrompt(
+			clientFd,
+			"Invalid Loan ID.\n"
+			"Enter Loan ID: "
+		);
+		_endResponse(clientFd);
+		return ;
+	}
+
+	session.selectedLoanId = loanId;
+	session.state = WAITING_FOR_LOAN_PAYMENT_AMOUNT;
+
+	_sendSimplePrompt(
+		clientFd,
+		"Enter Payment Amount: "
+	);
+	_endResponse(clientFd);
+}
+
+void	Server::_handleLoanPaymentAmount(int clientFd, const std::string &request)
+{
+	ClientSession			&session = _clientSessions[clientFd];
+	std::istringstream		input(request);
+	double					amount;
+	char					extra;
+
+	if (!(input >> amount) || (input >> extra))
+	{
+		_sendSimplePrompt(
+			clientFd,
+			"Invalid Loan payment amount.\n"
+			"Enter Payment Amount: "
+		);
+		_endResponse(clientFd);
+		return ;
+	}
+
+	if (amount <= 0)
+	{
+		_sendSimplePrompt(clientFd,
+			"Payment must be greater than zero.\n"
+			"Enter Payment Amount: "
+		);
+		_endResponse(clientFd);
+		return ;
+	}
+
+	if (_bank.makeLoanPayment(
+		clientFd,
+		session.selectedLoanId,
+		amount) == false)
+	{
+		_sendSimplePrompt(
+			clientFd, 
+			"Loan payment failed.\n"
+		);
+
+		session.selectedLoanId = -1;
+		session.state = MAIN_MENU;
+		_sendMainMenu(clientFd);
+		return ;
+	}
+
+	_sendSimplePrompt(
+		clientFd, 
+		"Loan payment successful.\n"
+	);
+
+	session.selectedLoanId = -1;
 	session.state = MAIN_MENU;
 	_sendMainMenu(clientFd);
 }

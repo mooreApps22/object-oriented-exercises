@@ -111,6 +111,45 @@ int	Bank::applyForLoan(int customerId, int accountId, double principal)
 }
 
 
+
+bool	Bank::makeLoanPayment(int customerId, int loanId, double amount)
+{
+	Customer	*customer;
+	Loan		*loan;
+
+	customer = _findCustomer(customerId);
+	loan = _findLoan(loanId);
+
+	if (customer == NULL || loan == NULL)
+		return false;
+
+	if (loan->getBorrower() != customerId)
+		return false;
+
+	if (amount <= 0)
+		return false;
+
+	if (customer->getCash() < amount)
+		return false;
+
+	if (amount > loan->getDebtBalance())
+		return false;
+
+	if (customer->_removeCash(amount) == false)
+		return false;
+
+	if (loan->_makePayment(amount) == false)
+	{
+		customer->_addCash(amount);
+		return false;
+	}
+
+	_liquidity += amount;
+	return true;
+
+}
+
+
 // BANK OUT STREAM METHODS
 
 void Bank::_getAllCustomers(std::ostream &p_os) const

@@ -141,6 +141,7 @@ void Server::_sendMainMenu(int clientFd)
 		"Select an option[A-K]: ";
 
 	send(clientFd, mainMenu, std::strlen(mainMenu), 0);
+	_endResponse(clientFd);
 }
 
 void Server::_sendLoansDetails(int clientFd)

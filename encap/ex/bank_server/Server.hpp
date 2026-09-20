@@ -29,8 +29,9 @@ class Server {
 			WAITING_FOR_DELETE_ACCOUNT,
 			WAITING_FOR_MODIFY_ACCOUNT,
 			WAITING_FOR_MODIFY_ACCOUNT_NAME,
-			WAITING_FOR_LOAN_ACCOUNT,
-			WAITING_FOR_LOAN_AMOUNT
+			WAITING_FOR_LOAN_AMOUNT,
+			WAITING_FOR_LOAN_PAYMENT_ID,
+			WAITING_FOR_LOAN_PAYMENT_AMOUNT
 		};
 
 		struct ClientSession
@@ -38,6 +39,7 @@ class Server {
 			ClientState	state;
 			std::string	buffer;
 			int			selectedAccountId;
+			int			selectedLoanId;
 		};
 
 		std::map<int, ClientSession>	_clientSessions;
@@ -71,11 +73,12 @@ class Server {
 		void	_handleDepositAmount(int clientFd, const std::string &request);
 		void	_handleWithdrawAccount(int clientFd, const std::string &request);
 		void	_handleWithdrawAmount(int clientFd, const std::string &request);
-		void	_handleLoanAccount(int clientFd, const std::string &request);
 		void	_handleLoanAmount(int clientFd, const std::string &request);
 		void	_handleDeleteAccount(int clientFd, const std::string &request);
 		void	_handleModifyAccount(int clientFd, const std::string &request);
 		void	_handleModifyAccountName(int clientFd, const std::string &request);
+		void	_handleLoanPaymentId(int clientFd, const std::string &request);
+		void	_handleLoanPaymentAmount(int clientFd, const std::string &request);
 
 		void	_endResponse(int clientFd);
 	public:

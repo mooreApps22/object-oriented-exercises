@@ -46,12 +46,14 @@ void	Server::_handleClientRequest(int clientFd, const std::string &request)
 		case WAITING_FOR_DELETE_ACCOUNT:
 			_handleDeleteAccount(clientFd, request);
 			break;
-		case WAITING_FOR_LOAN_ACCOUNT:
-			_handleLoanAccount(clientFd, request);
-			break;
 		case WAITING_FOR_LOAN_AMOUNT:
 			_handleLoanAmount(clientFd, request);
 			break;
-
+		case WAITING_FOR_LOAN_PAYMENT_ID:
+			_handleLoanPaymentId(clientFd, request);
+			break;
+		case WAITING_FOR_LOAN_PAYMENT_AMOUNT:
+			_handleLoanPaymentAmount(clientFd, request);
+			break;
 	}
 }

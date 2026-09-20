@@ -71,10 +71,16 @@ class Bank
 			double amount
 		);
 
-		int	applyForLoan(
+		int		applyForLoan(
 			int customerId,
 			int accountId,
 			double principal
+		);
+
+		bool	makeLoanPayment(
+			int customerId,
+			int loanId,
+			double amount 
 		);
 
 	friend std::ostream& operator<<(std::ostream& p_os, const Bank& p_bank);
