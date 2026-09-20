@@ -101,8 +101,9 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		case 'j':
 		{
 			//  Make Loan Payment
-			_clientSessions[clientFd].state = WAITING_FOR_LOAN_PAYMENT_AMOUNT;
+			_clientSessions[clientFd].state = WAITING_FOR_LOAN_PAYMENT_ID;
 			_sendSimplePrompt(clientFd, "Enter Account ID for Loan: ");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'K':
