@@ -46,13 +46,14 @@ class Bank
 		const Customer	*getCustomer(int customerId) const;
 
 		//Account
-		int				createAccount(int customerId,
-							const std::string &accountName);
-		bool			deleteAccount(int customerId, int accountId);
-		bool			modifyAccountName(int customerId,
-							int accountId,
-							const std::string &accountName);
-		const Account	*getAccount(int accountId) const;
+		int						createAccount(int customerId,
+									const std::string &accountName);
+		bool					deleteAccount(int customerId, int accountId);
+		bool					modifyAccountName(int customerId,
+									int accountId,
+									const std::string &accountName);
+		const Account			*getAccount(int accountId) const;
+		std::vector<const Loan *>	getCustomerLoans(int customerId) const;
 
 		//Loan
 		bool	makeLoanPayment(int loanId, double amount);

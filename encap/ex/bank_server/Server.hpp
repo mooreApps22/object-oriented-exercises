@@ -61,6 +61,7 @@ class Server {
 
 		void	_sendCustomerDetails(int clientFd);
 		void 	_sendAccountsDetails(int clientFd);
+		void 	_sendLoansDetails(int clientFd);
 
 		void	_handleMainMenu(int clientFd, const std::string &request);
 		void	_handleClientRequest(int clientFd, const std::string &request);
@@ -75,6 +76,8 @@ class Server {
 		void	_handleDeleteAccount(int clientFd, const std::string &request);
 		void	_handleModifyAccount(int clientFd, const std::string &request);
 		void	_handleModifyAccountName(int clientFd, const std::string &request);
+
+		void	_endResponse(int clientFd);
 	public:
 		Server(int port);
 		~Server();

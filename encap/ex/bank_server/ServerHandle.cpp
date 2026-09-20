@@ -13,6 +13,13 @@
 #include <sstream>
 #include <stdexcept>
 
+void	Server::_endResponse(int clientFd)
+{
+	const char	*delimiter = "<END_RESPONSE>";
+
+	send(clientFd, delimiter, std::strlen(delimiter), 0);
+}
+
 void	Server::_handleAccountName(int clientFd, const std::string &request)
 {
 	int	accountId;
@@ -26,11 +33,22 @@ void	Server::_handleAccountName(int clientFd, const std::string &request)
 			"Unable to create account.\n"
 			"Enter New Account Name: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
 	_clientSessions[clientFd].state = MAIN_MENU;
-	// send custom message here
+	std::ostringstream	response;
+	std::string			message;
+	response
+		<< "Newly Opened Account Name: "
+		<< request
+		<< " & Account ID: "
+		<< accountId
+		<< ".\n";
+
+	message = response.str();
+	_sendSimplePrompt(clientFd, message.c_str());
 	_sendMainMenu(clientFd);
 }
 
@@ -51,6 +69,7 @@ void	Server::_handleDepositAccount(
 			"Invalid Account ID.\n"
 			"Enter Deposit Account ID: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 	
@@ -63,6 +82,7 @@ void	Server::_handleDepositAccount(
 			"Account not found.\n"
 			"Enter Deposit Account ID: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -73,6 +93,7 @@ void	Server::_handleDepositAccount(
 		clientFd,
 		"Enter Deposit Amount: "
 	);
+	_endResponse(clientFd);
 }
 
 void	Server::_handleDepositAmount(int clientFd, const std::string &request)
@@ -89,6 +110,7 @@ void	Server::_handleDepositAmount(int clientFd, const std::string &request)
 			"Invalid amount.\n"
 			"Enter Deposit Amount: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -99,6 +121,8 @@ void	Server::_handleDepositAmount(int clientFd, const std::string &request)
 			"Deposit must be greater than zero.\n"
 			"Enter Deposit Amount: "
 		);
+		_endResponse(clientFd);
+		return;
 	}
 
 	if (_bank.deposit(
@@ -144,6 +168,7 @@ void	Server::_handleWithdrawAccount(
 			"Invalid Account ID.\n"
 			"Enter Withdraw Account ID: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 	
@@ -156,6 +181,7 @@ void	Server::_handleWithdrawAccount(
 			"Account not found.\n"
 			"Enter Withdraw Account ID: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -166,6 +192,7 @@ void	Server::_handleWithdrawAccount(
 		clientFd,
 		"Enter Withdraw Amount: "
 	);
+	_endResponse(clientFd);
 }
 
 void	Server::_handleWithdrawAmount(int clientFd, const std::string &request)
@@ -182,6 +209,7 @@ void	Server::_handleWithdrawAmount(int clientFd, const std::string &request)
 			"Invalid amount.\n"
 			"Enter Withdraw Amount: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -192,6 +220,8 @@ void	Server::_handleWithdrawAmount(int clientFd, const std::string &request)
 			"Withdrawal must be greater than zero.\n"
 			"Enter Withdraw Amount: "
 		);
+		_endResponse(clientFd);
+		return;
 	}
 
 	if (_bank.withdraw(
@@ -224,16 +254,17 @@ void	Server::_handleDeleteAccount(int clientFd, const std::string &request)
 {
 	ClientSession		&session = _clientSessions[clientFd];
 	std::istringstream	input(request);
-	double				amount;
+	double				accountId;
 	char				extra;
 
-	if (!(input >> amount) || (input >> extra))
+	if (!(input >> accountId) || (input >> extra))
 	{
 		_sendSimplePrompt(
 			clientFd,
-			"Invalid amount.\n"
-			"Enter Withdraw Amount: "
+			"Invalid Account ID.\n"
+			"Enter Account ID to DELETE: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -273,8 +304,9 @@ void	Server::_handleModifyAccount(
 		_sendSimplePrompt(
 			clientFd,
 			"Invalid Account ID.\n"
-			"Enter Deposit Account ID: "
+			"Enter Account ID to Modify: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -285,8 +317,9 @@ void	Server::_handleModifyAccount(
 		_sendSimplePrompt(
 			clientFd,
 			"Account not found.\n"
-			"Enter Withdraw Account ID: "
+			"Enter Account ID to Modify: "
 		);
+		_endResponse(clientFd);
 		return ;
 	}
 
@@ -297,6 +330,7 @@ void	Server::_handleModifyAccount(
 		clientFd,
 		"Enter New Account Name: "
 	);
+	_endResponse(clientFd);
 }
 
 void	Server::_handleModifyAccountName(
@@ -309,9 +343,10 @@ void	Server::_handleModifyAccountName(
 	{
 		_sendSimplePrompt(
 			clientFd,
-			"Account anme cannot be empty.\n"
+			"Account name cannot be empty.\n"
 			"Enter New Account Name: "
 		);
+		_endResponse(clientFd);
 		return; 
 	}
 
@@ -334,104 +369,6 @@ void	Server::_handleModifyAccountName(
 	_sendSimplePrompt(
 		clientFd,
 		"Account name changed successfully.\n"
-	);
-
-	session.selectedAccountId = -1;
-	session.state = MAIN_MENU;
-	_sendMainMenu(clientFd);
-}
-
-void	Server::_handleLoanAccount(
-	int clientFd,
-	const std::string &request)
-{
-	ClientSession		&session = _clientSessions[clientFd];
-	std::istringstream	input(request);
-	const Account		*account;
-	int					accountId;
-	char				extra;
-
-	if (!(input >> accountId) || (input >> extra))
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Invalid Account ID.\n"
-			"Enter Account ID For Loan: "
-		);
-		return ;
-	}
-
-	account = _bank.getAccount(accountId);
-	
-	if (account == NULL)
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Account not found.\n"
-			"Enter Account ID for Loan: "
-		);
-		return;
-	}
-
-	session.selectedAccountId = accountId;
-	session.state = WAITING_FOR_LOAN_AMOUNT;
-
-	_sendSimplePrompt(
-		clientFd,
-		"Enter Loan Amount: "
-	);
-}
-
-void	Server::_handleLoanAmount(int clientFd, const std::string &request)
-{
-	ClientSession		&session = _clientSessions[clientFd];
-	std::istringstream	input(request);
-	double				amount;
-	int					loanId;
-	char				extra;
-
-	if (!(input >> amount) || (input >> extra))
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Invalid loan amount.\n"
-			"Enter Loan Amount: "
-		);
-		return ;
-	}
-
-	if (amount <= 0)
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Loan amount must be greater than zero.\n"
-			"Enter Loan Amount: "
-		);
-		return ;
-	}
-
-	loanId = _bank.applyForLoan(
-		clientFd,
-		session.selectedAccountId,
-		amount
-	);
-
-	if (loanId == -1)
-	{
-		_sendSimplePrompt(
-			clientFd,
-			"Loan application failed.\n"
-		);
-
-		session.selectedAccountId = -1;
-		session.state = MAIN_MENU;
-		_sendMainMenu(clientFd);
-		return;
-	}
-
-	_sendSimplePrompt(
-		clientFd,
-		"Loan approved.\n"
 	);
 
 	session.selectedAccountId = -1;

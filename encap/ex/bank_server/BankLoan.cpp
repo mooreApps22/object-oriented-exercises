@@ -53,3 +53,18 @@ void	Bank::_removeLoan(int loanId)
 		}
 	}
 }
+
+std::vector<const Loan *>	Bank::getCustomerLoans(int customerId) const
+{
+	std::vector<const Loan *>	customerLoans;
+
+	for (std::vector<Loan>::const_iterator it = _loans.begin();
+		it != _loans.end();
+		++it)
+	{
+		if (it->getBorrower() == customerId)
+			customerLoans.push_back(&(*it));
+	}
+	
+	return customerLoans;
+}

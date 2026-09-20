@@ -12,8 +12,9 @@ class Client
 		Client(const Client &other);
 		Client	&operator=(const Client &other);
 
-		void	setupSocket();
-		void	connectToServer();
+		void	_setupSocket();
+		void	_connectToServer();
+		bool	_receiveResponse();
 
 	public:
 		Client(int port);

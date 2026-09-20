@@ -142,3 +142,53 @@ void Server::_sendMainMenu(int clientFd)
 
 	send(clientFd, mainMenu, std::strlen(mainMenu), 0);
 }
+
+void Server::_sendLoansDetails(int clientFd)
+{
+	std::vector<const Loan *>	loans;
+	std::ostringstream			response;
+	std::string					message;
+
+	loans = _bank.getCustomerLoans(clientFd);
+
+	response
+		<< "\n"
+		<< "================================\n"
+		<< "=             LOANS            =\n"
+		<< "================================\n";
+	
+	if (loans.empty())
+	{
+		response
+			<< "No loans found.\n";
+	}
+	else
+	{
+		for (std::vector<const Loan *>::const_iterator it = loans.begin();
+			it != loans.end();
+			++it)
+		{
+			response
+				<< "Loan Id: "
+				<< (*it)->getId()
+				<< "\n"
+				<< "Principal: $"
+				<< (*it)->getPrincipal()
+				<< "\n"
+				<< "Interest: $"
+				<< (*it)->getInterest()
+				<< "\n"
+				<< "Debt Balance: $"
+				<< (*it)->getDebtBalance()
+				<< "\n"
+				<< "--------------------------------\n";
+		}
+	}
+
+	response
+		<< "================================\n";
+
+	message = response.str();
+
+	_sendSimplePrompt(clientFd, message.c_str());
+}

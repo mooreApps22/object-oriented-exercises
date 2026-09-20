@@ -31,6 +31,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// View Accounts
 			_sendSimplePrompt(clientFd, "This is a List of All your Accounts: \n");
+			_sendAccountsDetails(clientFd);
 			_sendMainMenu(clientFd);
 			break;
 		}
@@ -39,8 +40,8 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// Open New Account: Prompt Account Name
 			_clientSessions[clientFd].state = WAITING_FOR_ACCOUNT_NAME;
-			_sendSimplePrompt(clientFd,
-				"You have chosen Option C.\nEnter the New Account Name: ");
+			_sendSimplePrompt(clientFd, "Enter the New Account Name: ");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'D':
@@ -49,6 +50,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 			// Deposit
 			_clientSessions[clientFd].state = WAITING_FOR_DEPOSIT_ACCOUNT;
 			_sendSimplePrompt(clientFd, "Enter an Account ID for Your Deposit: ");
+			_endResponse(clientFd);
 			break;
 		}
 		case 'E':
@@ -80,6 +82,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// Apply for Loan
 			_sendSimplePrompt(clientFd, "You Wish to Apply for a Loan: \n");
+			_handleLoanAccount(clientFd, request);
 			break;
 		}
 		case 'I':
@@ -87,6 +90,7 @@ void	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// View Loans
 			_sendSimplePrompt(clientFd, "These are you current Loans: \n");
+			_sendLoansDetails(clientFd);
 			_sendMainMenu(clientFd);
 			break;
 		}

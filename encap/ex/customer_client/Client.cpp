@@ -15,8 +15,8 @@ Client::Client(int port)
 	:	_port(port),
 		_socketFd(-1)
 {
-	setupSocket();
-	connectToServer();
+	_setupSocket();
+	_connectToServer();
 }
 
 Client::~Client()
@@ -25,7 +25,7 @@ Client::~Client()
 		close(_socketFd);
 }
 
-void	Client::setupSocket()
+void	Client::_setupSocket()
 {
 	_socketFd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -33,7 +33,7 @@ void	Client::setupSocket()
 		throw std::runtime_error("socket() failed");
 }
 
-void	Client::connectToServer()
+void	Client::_connectToServer()
 {
 	struct sockaddr_in	serverAddress;
 
@@ -55,27 +55,13 @@ void	Client::connectToServer()
 
 void	Client::run()
 {
-	char				receiveBuffer[1025];
-	ssize_t				bytesReceived;
-	static const int	BUF_SIZE = 1024;
 	std::string			input;
 
 	for (;;)
 	{
-		bytesReceived = recv(_socketFd, receiveBuffer, BUF_SIZE, 0);
-
-		if (bytesReceived == -1)
-			throw std::runtime_error("recv() failed");
-
-		if (bytesReceived == 0)
-		{
-			std::cout << "Server disconnected." << std::endl;
+		if (_receiveResponse() == false)
 			break;
-		}
 
-		receiveBuffer[bytesReceived] = '\0';
-		
-		std::cout << receiveBuffer;
 		std::getline(std::cin, input);
 
 		if(!std::cin)
@@ -83,14 +69,6 @@ void	Client::run()
 
 		input += '\n';
 		
-		if (send(
-			_socketFd,
-			input.c_str(),
-			input.size(),
-			0
-		) == -1)
-		{
-			throw std::runtime_error("send() failed");
-		}
+		send(_socketFd, input.c_str(), input.size(), 0);
 	}
 }
