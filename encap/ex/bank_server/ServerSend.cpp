@@ -40,14 +40,14 @@ void Server::_sendAccountsDetails(int clientFd)
 	
 	response
 		<< "\n"
-		<< "================================\n"
-		<< "=           ACCOUNTS           =\n"
-		<< "================================\n";
+		<< "================================================================\n"
+		<< "=                      ACCOUNTS                                =\n"
+		<< "================================================================\n";
 
 	if (accountIds.empty())
 	{
 		response
-			<< "No accounts found.\n";
+			<< "=     No accounts found.       =\n";
 	}
 	else
 	{
@@ -60,7 +60,7 @@ void Server::_sendAccountsDetails(int clientFd)
 			if (account != NULL)
 			{
 				response
-					<< "Account ID: "
+					<< "| Account ID: "
 					<< account->getId()
 					<< " | "
 					<< "Name: "
@@ -68,13 +68,13 @@ void Server::_sendAccountsDetails(int clientFd)
 					<< " | "
 					<< "Balance: "
 					<< account->getBalance()
-					<< "\n";
+					<< " |\n";
 			}
 		}
 	}
 
 	response
-		<< "================================\n";
+		<< "================================================================\n";
 
 	message = response.str();
 
@@ -99,19 +99,17 @@ void	Server::_sendCustomerDetails(int clientFd)
 
 	response
 		<< "\n"
-		<< "================================\n"
-		<< "=      CUSTOMER DETAILS        =\n"
-		<< "================================\n"
-		<< "Customer ID: "
+		<< "================================================================\n"
+		<< "=                  CUSTOMER DETAILS                            =\n"
+		<< "================================================================\n"
+		<< "| Customer ID: "
 		<< customer->getId()
-		<< "\n"
-		<< "Cash: $"
+		<< " | Cash: $"
 		<< customer->getCash()	
-		<< "\n"
-		<< "Accounts: "
+		<< " | Accounts: "
 		<< customer->getAccountIds().size()	
-		<< "\n"
-		<< "================================\n";
+		<< " |\n"
+		<< "================================================================\n";
 
 	_sendSimplePrompt(
 		clientFd,
@@ -126,19 +124,19 @@ void Server::_sendMainMenu(int clientFd)
 		"============================\n"
 		"          BANK SERVER       \n"
 		"============================\n"
-		"A. View Customer Details\n"
-		"B. View Accounts\n"
-		"C. Open New Account\n"
-		"D. Deposit\n"
-		"E. Withdraw\n"
-		"F. Modify Acount\n"
-		"G. Delete Account\n"
-		"H. Apply for Loan\n"
-		"I. View Loans\n"
-		"J. Make Loan Payment\n"
-		"K. Disconnect\n"
+		" A. View Customer Details\n"
+		" B. View Accounts\n"
+		" C. Open New Account\n"
+		" D. Deposit\n"
+		" E. Withdraw\n"
+		" F. Modify Acount\n"
+		" G. Delete Account\n"
+		" H. Apply for Loan\n"
+		" I. View Loans\n"
+		" J. Make Loan Payment\n"
+		" K. Disconnect\n"
 		"============================\n"
-		"Select an option[A-K]: ";
+		" Select an option[A-K]: ";
 
 	send(clientFd, mainMenu, std::strlen(mainMenu), 0);
 	_endResponse(clientFd);
@@ -154,14 +152,14 @@ void Server::_sendLoansDetails(int clientFd)
 
 	response
 		<< "\n"
-		<< "================================\n"
-		<< "=             LOANS            =\n"
-		<< "================================\n";
+		<< "================================================================\n"
+		<< "=                          LOANS                               =\n"
+		<< "================================================================\n";
 	
 	if (loans.empty())
 	{
 		response
-			<< "No loans found.\n";
+			<< "=       No loans found.        =\n";
 	}
 	else
 	{
@@ -170,24 +168,21 @@ void Server::_sendLoansDetails(int clientFd)
 			++it)
 		{
 			response
-				<< "Loan Id: "
+				<< "| Loan Id: "
 				<< (*it)->getId()
-				<< "\n"
-				<< "Principal: $"
+				<< " | Principal: $"
 				<< (*it)->getPrincipal()
-				<< "\n"
-				<< "Interest: $"
+				<< " | Interest: $"
 				<< (*it)->getInterest()
-				<< "\n"
-				<< "Debt Balance: $"
+				<< " | Debt Balance: $"
 				<< (*it)->getDebtBalance()
-				<< "\n"
-				<< "--------------------------------\n";
+				<< " |\n"
+				<< "---------------------------------------------------------\n";
 		}
 	}
 
 	response
-		<< "================================\n";
+		<< "============================================================================\n";
 
 	message = response.str();
 

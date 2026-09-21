@@ -71,6 +71,4 @@ void	Client::run()
 		
 		send(_socketFd, input.c_str(), input.size(), 0);
 	}
-
-	std::cout << "[DEBUG] run() finished" << std::endl;
 }

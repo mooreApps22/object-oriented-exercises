@@ -126,15 +126,6 @@ void	Server::_handleLoanPaymentAmount(int clientFd, const std::string &request)
 		return ;
 	}
 
-	std::ostringstream	debug_stream;
-
-	debug_stream
-		<< "[DEBUG] Loan ID: "
-		<< session.selectedLoanId
-		<< std::endl;
-
-	_sendSimplePrompt(clientFd, debug_stream.str().c_str());
-
 	if (_bank.makeLoanPayment(
 		clientFd,
 		session.selectedLoanId,
