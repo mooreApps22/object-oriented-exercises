@@ -73,6 +73,7 @@ class Server {
 		void	_handleDepositAmount(int clientFd, const std::string &request);
 		void	_handleWithdrawAccount(int clientFd, const std::string &request);
 		void	_handleWithdrawAmount(int clientFd, const std::string &request);
+		void	_handleLoanAccountId(int clientFd, const std::string &request);
 		void	_handleLoanAmount(int clientFd, const std::string &request);
 		void	_handleDeleteAccount(int clientFd, const std::string &request);
 		void	_handleModifyAccount(int clientFd, const std::string &request);

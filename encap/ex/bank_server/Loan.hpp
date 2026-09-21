@@ -20,7 +20,8 @@ class Loan
 				int id,
 				int	borrower,
 				double principal,
-				double interest
+				double interest,
+				double debtBalance
 		);
 		Loan(const Loan &other);
 		Loan &operator=(const Loan &other);

@@ -70,29 +70,26 @@ bool	Bank::withdraw(int customerId, int accountId, double amount)
 	return true;
 }
 
-int	Bank::applyForLoan(int customerId, int accountId, double principal)
+int	Bank::applyForLoan(int customerId, double principal)
 {
 	Customer	*customer;
-	Account		*account;
 	double		interest;
 	int			loanId;
+	double		debtBalance;
 
 	customer = _findCustomer(customerId);
-	account = _findAccount(accountId);
 
-	if (customer == NULL || account == NULL)
+	if (customer == NULL)
 		return -1;
 
 	if (principal <= 0)
 		return -1;
 
-	if (_customerOwnsAccount(*customer, accountId) == false)
-		return  -1;
-
 	if (principal > _liquidity)
 		return -1;
 
 	interest = principal * 0.10;
+	debtBalance = principal + interest;
 	loanId = _nextLoanId++;
 
 	_loans.push_back(
@@ -100,13 +97,12 @@ int	Bank::applyForLoan(int customerId, int accountId, double principal)
 			loanId,
 			customerId,
 			principal,
-			interest
+			interest,
+			debtBalance
 		)
 	);
 
 	_liquidity -= principal;
-	account->_addFunds(principal);
-
 	return loanId;
 }
 

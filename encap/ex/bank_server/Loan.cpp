@@ -4,11 +4,13 @@ Loan::Loan(
 	int id,
 	int borrower,
 	double principal,
-	double interest)
+	double interest,
+	double debtBalance)
 	:	_id(id),
 		_borrower(borrower),
 		_principal(principal),
-		_interest(interest)
+		_interest(interest),
+		_debtBalance(debtBalance)
 {
 }
 
@@ -16,7 +18,8 @@ Loan::Loan(const Loan &other)
 	:	_id(other._id),
 		_borrower(other._borrower),
 		_principal(other._principal),
-		_interest(other._interest)
+		_interest(other._interest),
+		_debtBalance(other._debtBalance)
 {
 }
 
@@ -29,6 +32,7 @@ Loan	&Loan::operator=(const Loan &other)
 		_borrower = other._borrower;
 		_principal = other._principal;
 		_interest = other._interest;
+		_debtBalance = other._debtBalance;
 	}
 
 	return *this;

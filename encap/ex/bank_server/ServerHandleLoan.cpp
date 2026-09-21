@@ -13,6 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 
+
 void	Server::_handleLoanAmount(int clientFd, const std::string &request)
 {
 	ClientSession		&session = _clientSessions[clientFd];
@@ -43,7 +44,6 @@ void	Server::_handleLoanAmount(int clientFd, const std::string &request)
 
 	loanId = _bank.applyForLoan(
 		clientFd,
-		session.selectedAccountId,
 		amount
 	);
 
@@ -125,6 +125,15 @@ void	Server::_handleLoanPaymentAmount(int clientFd, const std::string &request)
 		_endResponse(clientFd);
 		return ;
 	}
+
+	std::ostringstream	debug_stream;
+
+	debug_stream
+		<< "[DEBUG] Loan ID: "
+		<< session.selectedLoanId
+		<< std::endl;
+
+	_sendSimplePrompt(clientFd, debug_stream.str().c_str());
 
 	if (_bank.makeLoanPayment(
 		clientFd,

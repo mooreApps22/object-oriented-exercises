@@ -111,4 +111,8 @@ colors:
 	@echo "${WHITE}white...${RESET}"
 	@echo "${RESET}normal...${RESET}"
 
+bear:
+	make fclean
+	bear -- make
+
 .PHONY: all clean fclean re colors

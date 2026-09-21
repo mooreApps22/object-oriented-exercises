@@ -74,7 +74,6 @@ class Bank
 
 		int		applyForLoan(
 			int customerId,
-			int accountId,
 			double principal
 		);
 

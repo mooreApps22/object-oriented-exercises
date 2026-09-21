@@ -85,7 +85,7 @@ bool	Server::_handleMainMenu(int clientFd, const std::string &request)
 		{
 			// Apply for Loan
 			_clientSessions[clientFd].state = WAITING_FOR_LOAN_AMOUNT;
-			_sendSimplePrompt(clientFd, "Enter loan amount: ");
+			_sendSimplePrompt(clientFd, "Enter Loan Amount: ");
 			_endResponse(clientFd);
 			return false;
 		}
