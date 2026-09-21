@@ -2,3 +2,4 @@ encap
 compile_commands.json
 obj/
 *.o
+.cache
